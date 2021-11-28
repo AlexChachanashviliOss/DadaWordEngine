@@ -122,11 +122,17 @@ public class WordsByType<T extends Word> {
             InputStream is = getConfigStream(baseResourcePath);
             if (is != null) {
                 properties.load(is);
-                String xformerTypeName = properties.getProperty("phoneticTransformerType", PhoneticTransformerBuilder.TransformerType.Phonemix.name());
-                PhoneticTransformerBuilder.TransformerType xformerType = PhoneticTransformerBuilder.TransformerType.valueOf(xformerTypeName);
-                LOGGER.info("Using phonetic transformer: "+xformerType.name());
-                this.xformer = PhoneticTransformerBuilder.builder().withTransformer(xformerType).build();
-                this.xformerReverse = PhoneticTransformerBuilder.builder().withTransformer(xformerType).withReverse().build();
+                String xformerTypeForwardName = properties.getProperty("phoneticTransformerForwardType", PhoneticTransformerBuilder.TransformerType.PhonemixCompacting.name());
+                String xformerTypeReverseName = properties.getProperty("phoneticTransformerReverseType", PhoneticTransformerBuilder.TransformerType.PhonemixCompacting.name());
+
+                LOGGER.info("Using forward phonetic transformer: "+xformerTypeForwardName);
+                LOGGER.info("Using reverse phonetic transformer: "+xformerTypeReverseName);
+                this.xformer = PhoneticTransformerBuilder.builder()
+                        .withTransformer(PhoneticTransformerBuilder.TransformerType.valueOf(xformerTypeForwardName))
+                        .build();
+                this.xformerReverse = PhoneticTransformerBuilder.builder()
+                        .withTransformer(PhoneticTransformerBuilder.TransformerType.valueOf(xformerTypeReverseName))
+                        .withReverse().build();
             } else {
                 this.xformer = PhoneticTransformerBuilder.getDefaultForward();
                 this.xformerReverse = PhoneticTransformerBuilder.getDefaultReverse();

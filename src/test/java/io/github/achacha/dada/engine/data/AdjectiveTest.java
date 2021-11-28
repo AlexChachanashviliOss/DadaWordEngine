@@ -1,6 +1,7 @@
 package io.github.achacha.dada.engine.data;
 
 import io.github.achacha.dada.engine.phonemix.PhonemixAggressiveTransformer;
+import io.github.achacha.dada.engine.phonemix.PhonemixCompactingTransformer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +24,7 @@ public class AdjectiveTest {
 
         assertEquals("resource:/data/test/"+ Word.Type.Adjective.getTypeName()+".csv", adjectives.getResourcePath());
         assertEquals(Word.Type.Adjective, adjectives.getType());
-        assertEquals(PhonemixAggressiveTransformer.class, adjectives.xformer.getClass());        // loaded via config.properties
+        assertEquals(PhonemixCompactingTransformer.class, adjectives.xformer.getClass());        // loaded via config.properties
         assertEquals(PhonemixAggressiveTransformer.class, adjectives.xformerReverse.getClass()); // loaded via config.properties
         assertEquals(1, adjectives.getWordsData().size());
 

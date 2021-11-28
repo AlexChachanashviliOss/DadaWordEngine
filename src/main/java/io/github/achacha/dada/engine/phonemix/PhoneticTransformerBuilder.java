@@ -6,11 +6,11 @@ package io.github.achacha.dada.engine.phonemix;
 public class PhoneticTransformerBuilder {
 
     public enum TransformerType {
-        Phonemix,
+        PhonemixCompacting,
         PhonemixAggressive
     }
 
-    private TransformerType transformerType = TransformerType.Phonemix;
+    private TransformerType transformerType = TransformerType.PhonemixCompacting;
 
     /**
      * Start position
