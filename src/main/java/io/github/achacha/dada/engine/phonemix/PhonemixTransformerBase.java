@@ -197,15 +197,15 @@ public abstract class PhonemixTransformerBase implements PhoneticTransformer {
                     }
                     break;
 
-                // who -> ho  (wh treated as w in digraph)
+                // who -> hO  (wh treated as w in digraph and o sound extended as oo)
                 case 'w':
                     if (s[i + 1] == 'h' && s[i + 2] == 'o') {
                         LOGGER.debug("> who detected, i={} s={}", i, s);
                         s[i] = NONE;
                         s[i + 1] = 'h';
-                        s[i + 2] = 'o';
+                        s[i + 2] = 'O';
                         i += 2;
-                        LOGGER.debug("< who->_ho, i={} s={}", i, s);
+                        LOGGER.debug("< who->_hO, i={} s={}", i, s);
                     }
                     break;
             }

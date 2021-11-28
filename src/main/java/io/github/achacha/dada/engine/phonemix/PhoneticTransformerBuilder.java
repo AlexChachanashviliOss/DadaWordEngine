@@ -6,7 +6,15 @@ package io.github.achacha.dada.engine.phonemix;
 public class PhoneticTransformerBuilder {
 
     public enum TransformerType {
+        /**
+         * Standard compacting transformer
+         * Optimized for English
+         */
         PhonemixCompacting,
+        /**
+         * Aggressive builds on compacting by removing non-compound vowels and sounds that tend to be silent
+         * Optimized for English
+         */
         PhonemixAggressive
     }
 
