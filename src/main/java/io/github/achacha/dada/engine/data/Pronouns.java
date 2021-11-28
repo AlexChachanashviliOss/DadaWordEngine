@@ -1,6 +1,5 @@
 package io.github.achacha.dada.engine.data;
 
-import io.github.achacha.dada.engine.phonemix.PhoneticTransformer;
 import org.apache.commons.lang3.RandomUtils;
 
 import javax.annotation.Nonnull;
@@ -33,15 +32,16 @@ public class Pronouns extends WordsByType<Pronoun> {
     }
 
     public Pronouns() {
-        super(Word.Type.Pronoun);
+        super(Word.Type.Pronoun, RESOURCE_DATA_DEFAULT);
     }
 
-    public Pronouns(String resourcePath, PhoneticTransformer xformer, PhoneticTransformer xformerReverse) {
-        super(Word.Type.Pronoun, resourcePath, xformer, xformerReverse);
+    public Pronouns(String resourcePath) {
+        super(Word.Type.Pronoun, resourcePath);
     }
 
     @Override
-    public void init() {
+    public void init(String baseResourcePath) {
+        super.init(baseResourcePath);
         wordByForm = createIndexCollection();
     }
 

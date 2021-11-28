@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
  */
 public class WordsByType<T extends Word> {
     private static final Logger LOGGER = LogManager.getLogger(WordsByType.class);
+    public static final String RESOURCE_DATA_DEFAULT = "resource:/data/default/";
 
     /**
      * Path to the words data file
@@ -64,7 +66,7 @@ public class WordsByType<T extends Word> {
     /**
      * Phonetic transformer
      */
-    protected final PhoneticTransformer xformer;
+    protected PhoneticTransformer xformer;
 
     /**
      * Multimap of phonetic to word
@@ -74,7 +76,7 @@ public class WordsByType<T extends Word> {
     /**
      * Phonetic transformer
      */
-    protected final PhoneticTransformer xformerReverse;
+    protected PhoneticTransformer xformerReverse;
 
     /**
      * Last character phoneme mapped to Multimap of phonetic to word
@@ -89,34 +91,21 @@ public class WordsByType<T extends Word> {
     /**
      * Empty set
      */
-    private static final WordsByType EMPTY = new WordsByType<>(Word.Type.Unknown, ImmutableList.of());
-
-    /**
-     * Load default words for the given type
-     * Will use resource at /data/default/[type].csv
-     * Will build default xformers
-     *
-     * @param type Word.Type
-     */
-    public WordsByType(Word.Type type) {
-        this(
-                type,
-                "resource:/data/default/" + type.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.builder().build(),
-                PhoneticTransformerBuilder.builder().withReverse().build());
-    }
+    private static final WordsByType<Word> EMPTY = new WordsByType<>(Word.Type.Unknown, ImmutableList.of());
 
     /**
      * Constant list of provided words
-     * @param type Word.Type
+     *
+     * @param type        Word.Type
      * @param listOfWords Collection of text to parse as type provided
      */
     public WordsByType(Word.Type type, Collection<String> listOfWords) {
+        this.xformer = PhoneticTransformerBuilder.getDefaultForward();
+        this.xformerReverse = PhoneticTransformerBuilder.getDefaultReverse();
+
         this.resourcePath = null;
         this.type = type;
-        this.xformer = PhoneticTransformerBuilder.builder().build();
-        this.xformerReverse = PhoneticTransformerBuilder.builder().withReverse().build();
-        listOfWords.forEach(w->{
+        listOfWords.forEach(w -> {
             T word = T.parse(type, w);
             addWord(word);
         });
@@ -124,25 +113,42 @@ public class WordsByType<T extends Word> {
 
     /**
      * Initialize the class before loading and parsing data
+     *
+     * @param baseResourcePath Base resource path
      */
-    public void init() {
+    public void init(String baseResourcePath) {
+        Properties properties = new Properties();
+        try {
+            InputStream is = getConfigStream(baseResourcePath);
+            if (is != null) {
+                properties.load(is);
+                String xformerTypeName = properties.getProperty("phoneticTransformerType", PhoneticTransformerBuilder.TransformerType.Phonemix.name());
+                PhoneticTransformerBuilder.TransformerType xformerType = PhoneticTransformerBuilder.TransformerType.valueOf(xformerTypeName);
+                LOGGER.info("Using phonetic transformer: "+xformerType.name());
+                this.xformer = PhoneticTransformerBuilder.builder().withTransformer(xformerType).build();
+                this.xformerReverse = PhoneticTransformerBuilder.builder().withTransformer(xformerType).withReverse().build();
+            } else {
+                this.xformer = PhoneticTransformerBuilder.getDefaultForward();
+                this.xformerReverse = PhoneticTransformerBuilder.getDefaultReverse();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error reading config.properties, using defaults", e);
+            this.xformer = PhoneticTransformerBuilder.getDefaultForward();
+            this.xformerReverse = PhoneticTransformerBuilder.getDefaultReverse();
+        }
     }
 
     /**
      * Create a set of data.words based on CSV file in resourcePath
      *
-     * @param type Word.Type
-     * @param resourcePath String resource resourcePath
-     * @param xformer Transformer to use for forward words
-     * @param xformerReverse Transformer to use for reversed words
+     * @param type             Word.Type
+     * @param baseResourcePath String base resource path with trailing /
      */
-    public WordsByType(Word.Type type, String resourcePath, PhoneticTransformer xformer, PhoneticTransformer xformerReverse) {
-        this.resourcePath = resourcePath;
+    public WordsByType(Word.Type type, String baseResourcePath) {
+        this.resourcePath = baseResourcePath + type.getTypeName() + ".csv";
         this.type = type;
-        this.xformer = xformer;
-        this.xformerReverse = xformerReverse;
 
-        init();
+        init(baseResourcePath);
 
         try {
             try (InputStream is = getStreamFromPath(type, resourcePath)) {
@@ -206,24 +212,22 @@ public class WordsByType<T extends Word> {
 
             File file = new File(path);
             if (file.canRead())
-                return new FileInputStream(path);
+                return new FileInputStream(file);
             else {
-                path = "resource:/data/default/" + type.getTypeName() + ".csv";
+                path = RESOURCE_DATA_DEFAULT + type.getTypeName() + ".csv";
                 resourcePath = path;
                 return getClass().getResourceAsStream(path.substring(9));
             }
-        }
-        else {
+        } else {
             // Default is relative stream from resource
             LOGGER.debug("Opening resource input stream at path={}", path);
             InputStream is = getClass().getResourceAsStream(path.substring(9));
             if (is == null) {
-                path = "resource:/data/default/" + type.getTypeName() + ".csv";
+                path = RESOURCE_DATA_DEFAULT + type.getTypeName() + ".csv";
                 LOGGER.debug("Failed to locate resource at path={}, falling back to default: {}", resourcePath, path);
                 resourcePath = path;
                 return getClass().getResourceAsStream(path.substring(9));
-            }
-            else {
+            } else {
                 return is;
             }
         }
@@ -231,7 +235,37 @@ public class WordsByType<T extends Word> {
     }
 
     /**
+     * Try to open as {@link InputStream} config.properties in words directory or use default
+     *
+     * @param baseResourcePath base resource path which may have overridden config
+     * @return {@link InputStream} or null if not found
+     * @throws FileNotFoundException file not found
+     */
+    private InputStream getConfigStream(String baseResourcePath) throws FileNotFoundException {
+        InputStream is = null;
+        if (!baseResourcePath.startsWith("resource:")) {
+            // Physical file
+            File file = new File(baseResourcePath + "config.properties");
+            if (file.canRead()) {
+                return new FileInputStream(file);
+            }
+        } else {
+            // Resource file
+            is = getClass().getResourceAsStream(baseResourcePath.substring(9) + "config.properties");
+            if (is == null) {
+                // Try default location
+                is = getClass().getResourceAsStream("/data/default/config.properties");
+            }
+            if (is == null) {
+                LOGGER.debug("Unable to find /data/default/config.properties, using defaults");
+            }
+        }
+        return is;
+    }
+
+    /**
      * Add word to collection
+     *
      * @param word Word
      */
     protected void addWord(T word) {
@@ -239,7 +273,7 @@ public class WordsByType<T extends Word> {
 
         wordsByBaseWord.put(word.getWordString(), word);
 
-        word.getAllForms().forEach(pair->{
+        word.getAllForms().forEach(pair -> {
             // Word mapped to text
             String formOfWord = pair.getRight();
             String formName = pair.getLeft();
@@ -279,10 +313,12 @@ public class WordsByType<T extends Word> {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Word> WordsByType<T> empty() {
-        return (WordsByType<T>)EMPTY;
+        return (WordsByType<T>) EMPTY;
     }
+
     /**
      * Check all word forms to find Word
+     *
      * @param text word text (some form of the word)
      * @return Word or null
      */
@@ -293,6 +329,7 @@ public class WordsByType<T extends Word> {
 
     /**
      * Get Word object by base word, does not check other forms
+     *
      * @param base String
      * @return Word or null if not found
      */
@@ -346,8 +383,7 @@ public class WordsByType<T extends Word> {
                     )
                     .map(Map.Entry::getValue)
                     .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        }
-        else
+        } else
             return Collections.emptyList();
 
     }
@@ -361,6 +397,7 @@ public class WordsByType<T extends Word> {
 
     /**
      * Duplicates are ignored, this is used in unit testing
+     *
      * @return true if duplicate words were found during parsing of the data
      */
     public boolean isDuplicateFound() {
@@ -380,7 +417,7 @@ public class WordsByType<T extends Word> {
      * @return Header comment for each specific word type used in the CSV file as column header
      */
     protected String getOutputHeader() {
-        switch(type) {
+        switch (type) {
             case Noun:
                 return "#singular,plural";
             case Adjective:
@@ -402,6 +439,7 @@ public class WordsByType<T extends Word> {
 
     /**
      * Write data to file
+     *
      * @param writer BufferedWriter
      * @throws IOException if unable to write file
      */

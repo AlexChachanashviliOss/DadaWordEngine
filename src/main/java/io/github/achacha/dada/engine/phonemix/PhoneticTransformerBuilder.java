@@ -5,12 +5,12 @@ package io.github.achacha.dada.engine.phonemix;
  */
 public class PhoneticTransformerBuilder {
 
-    private enum TYPE {
+    public enum TransformerType {
         Phonemix,
         PhonemixAggressive
     }
 
-    private TYPE type = TYPE.Phonemix;
+    private TransformerType transformerType = TransformerType.Phonemix;
 
     /**
      * Start position
@@ -59,14 +59,13 @@ public class PhoneticTransformerBuilder {
     }
 
     private PhoneticTransformerBuilder() {
-
     }
 
     /**
      * Allow to start processing at a position
      *
      * @param startPos int
-     * @return PhoneticTransformerBuilder this
+     * @return {@link PhoneticTransformerBuilder} this
      */
     public PhoneticTransformerBuilder withStartPosition(int startPos) {
         this.startPos = startPos;
@@ -74,18 +73,28 @@ public class PhoneticTransformerBuilder {
     }
 
     /**
+     * Use a specific phonetic transformer
+     * @param transformerType {@link TransformerType}
+     * @return {@link PhoneticTransformerBuilder} this
+     */
+    public PhoneticTransformerBuilder withTransformer(TransformerType transformerType) {
+        this.transformerType = transformerType;
+        return this;
+    }
+
+    /**
      * Use aggressive transformer that ignores more non-essential sounds
-     * @return PhoneticTransformerBuilder this
+     * @return {@link PhoneticTransformerBuilder} this
      */
     public PhoneticTransformerBuilder withAggressiveTransformer() {
-        this.type = TYPE.PhonemixAggressive;
+        this.transformerType = TransformerType.PhonemixAggressive;
         return this;
     }
 
     /**
      * Ignore leading vowel
      * By default all leading phonemixs are kept
-     * @return PhoneticTransformerBuilder this
+     * @return {@link PhoneticTransformerBuilder} this
      */
     public PhoneticTransformerBuilder withIgnoreLeadingVowel() {
         this.keepLeadingVowel = false;
@@ -96,7 +105,7 @@ public class PhoneticTransformerBuilder {
      * If enabled all resulting data is reversed
      * If multiple words are detected each will be reversed while sentence structure preserved
      * Reversing phonemix is mainly for rhyming words
-     * @return PhoneticTransformerBuilder this
+     * @return {@link PhoneticTransformerBuilder} this
      */
     public PhoneticTransformerBuilder withReverse() {
         this.reverse = true;
@@ -108,7 +117,7 @@ public class PhoneticTransformerBuilder {
      * @return PhoneticTransformer object to match builder config
      */
     public PhoneticTransformer build() {
-        switch (type) {
+        switch (transformerType) {
             case PhonemixAggressive:
                 return new PhonemixAggressiveTransformer(this);
 

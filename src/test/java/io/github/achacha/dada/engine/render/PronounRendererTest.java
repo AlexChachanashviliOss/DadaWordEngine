@@ -5,7 +5,6 @@ import io.github.achacha.dada.engine.builder.SentenceRendererBuilder;
 import io.github.achacha.dada.engine.data.Pronoun;
 import io.github.achacha.dada.engine.data.Pronouns;
 import io.github.achacha.dada.engine.data.Word;
-import io.github.achacha.dada.engine.phonemix.PhoneticTransformerBuilder;
 import io.github.achacha.dada.integration.tags.GlobalData;
 import io.github.achacha.dada.test.GlobalTestData;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,10 +52,7 @@ public class PronounRendererTest {
 
     @Test
     public void testPronounRenderer() {
-        Pronouns pronouns = new Pronouns(
-                "resource:/data/test/pronoun.csv",
-                PhoneticTransformerBuilder.builder().build(),
-                PhoneticTransformerBuilder.builder().withReverse().build());
+        Pronouns pronouns = new Pronouns("resource:/data/test/");
 
         PronounRenderer tag = new PronounRenderer(pronouns);
         String pronoun = tag.execute();

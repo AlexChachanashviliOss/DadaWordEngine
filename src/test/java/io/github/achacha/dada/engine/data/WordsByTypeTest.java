@@ -1,7 +1,6 @@
 package io.github.achacha.dada.engine.data;
 
 import com.google.common.collect.Multimap;
-import io.github.achacha.dada.engine.phonemix.PhoneticTransformerBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
@@ -14,11 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WordsByTypeTest {
-    private WordsByType<Verb> verbs = new WordsByType<>(
-            Word.Type.Verb,
-            "resource:/data/test/"+ Word.Type.Verb.getTypeName()+".csv",
-            PhoneticTransformerBuilder.builder().build(),
-            PhoneticTransformerBuilder.builder().withReverse().build());
+    private WordsByType<Verb> verbs = new WordsByType<>(Word.Type.Verb, "resource:/data/test/");
 
     @Test
     public void testInternals() {
@@ -47,11 +42,7 @@ public class WordsByTypeTest {
 
     @Test
     public void testLoadingAdverb() {
-        WordsByType<Adverb> adverbs = new WordsByType<>(
-                Word.Type.Adverb,
-                "resource:/data/test/"+ Word.Type.Adverb.getTypeName()+".csv",
-                PhoneticTransformerBuilder.builder().build(),
-                PhoneticTransformerBuilder.builder().withReverse().build());
+        WordsByType<Adverb> adverbs = new WordsByType<>(Word.Type.Adverb, "resource:/data/test/");
 
         assertEquals("resource:/data/test/"+ Word.Type.Adverb.getTypeName()+".csv", adverbs.getResourcePath());
         assertEquals(Word.Type.Verb, verbs.getType());

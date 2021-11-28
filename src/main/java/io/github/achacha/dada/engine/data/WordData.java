@@ -1,6 +1,5 @@
 package io.github.achacha.dada.engine.data;
 
-import io.github.achacha.dada.engine.phonemix.PhoneticTransformerBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -84,36 +83,15 @@ public class WordData {
             ignore.addAll(loadIgnoreWords(baseResourceDir+"/ignore.csv"));
         }
 
-        this.baseResourceDir = baseResourceDir;
+        this.baseResourceDir = baseResourceDir + "/";
 
-        pronouns = new Pronouns(
-                baseResourceDir+"/" + Word.Type.Pronoun.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.getDefaultForward(),
-                PhoneticTransformerBuilder.getDefaultReverse());
-        conjunctions = new WordsByType<>(
-                Word.Type.Conjunction, baseResourceDir+"/" + Word.Type.Conjunction.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.getDefaultForward(),
-                PhoneticTransformerBuilder.getDefaultReverse());
-        nouns = new WordsByType<>(
-                Word.Type.Noun, baseResourceDir+"/" + Word.Type.Noun.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.getDefaultForward(),
-                PhoneticTransformerBuilder.getDefaultReverse());
-        adjectives = new WordsByType<>(
-                Word.Type.Adjective, baseResourceDir+"/" + Word.Type.Adjective.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.getDefaultForward(),
-                PhoneticTransformerBuilder.getDefaultReverse());
-        verbs = new WordsByType<>(
-                Word.Type.Verb, baseResourceDir+"/" + Word.Type.Verb.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.getDefaultForward(),
-                PhoneticTransformerBuilder.getDefaultReverse());
-        adverbs = new WordsByType<>(
-                Word.Type.Adverb, baseResourceDir+"/" + Word.Type.Adverb.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.getDefaultForward(),
-                PhoneticTransformerBuilder.getDefaultReverse());
-        prepositions = new WordsByType<>(
-                Word.Type.Preposition, baseResourceDir+"/" + Word.Type.Preposition.getTypeName() + ".csv",
-                PhoneticTransformerBuilder.getDefaultForward(),
-                PhoneticTransformerBuilder.getDefaultReverse());
+        pronouns = new Pronouns(this.baseResourceDir);
+        conjunctions = new WordsByType<>(Word.Type.Conjunction, this.baseResourceDir);
+        nouns = new WordsByType<>(Word.Type.Noun, this.baseResourceDir);
+        adjectives = new WordsByType<>(Word.Type.Adjective, this.baseResourceDir);
+        verbs = new WordsByType<>(Word.Type.Verb, this.baseResourceDir);
+        adverbs = new WordsByType<>(Word.Type.Adverb, this.baseResourceDir);
+        prepositions = new WordsByType<>(Word.Type.Preposition, this.baseResourceDir);
     }
 
     private Set<String> loadIgnoreWords(String resourcePath) {

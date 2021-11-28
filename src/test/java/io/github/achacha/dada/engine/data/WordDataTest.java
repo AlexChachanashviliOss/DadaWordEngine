@@ -40,7 +40,7 @@ public class WordDataTest {
     @Test
     public void testLoadingTest() {
         WordData wordData = GlobalTestData.WORD_DATA;
-        assertEquals("resource:/data/test", wordData.getBaseResourceDir());
+        assertEquals("resource:/data/test/", wordData.getBaseResourceDir());
         assertEquals("resource:/data/test/noun.csv", wordData.getNouns().getResourcePath());
         assertEquals("resource:/data/test/pronoun.csv", wordData.getPronouns().getResourcePath());
         assertEquals("resource:/data/test/verb.csv", wordData.getVerbs().getResourcePath());
