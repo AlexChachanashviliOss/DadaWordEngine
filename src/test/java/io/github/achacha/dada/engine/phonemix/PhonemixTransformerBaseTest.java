@@ -131,7 +131,7 @@ public class PhonemixTransformerBaseTest {
         assertThree(transformer,"sku", "scu");
 
         // w
-        assertThree(transformer,"_ho", "who");
+        assertThree(transformer,"_hO", "who");
         assertThree(transformer,"whe", "whe");  // digraphs handle this case
     }
 
