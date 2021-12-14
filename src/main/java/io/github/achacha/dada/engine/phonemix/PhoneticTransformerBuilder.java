@@ -15,7 +15,11 @@ public class PhoneticTransformerBuilder {
          * Aggressive builds on compacting by removing non-compound vowels and sounds that tend to be silent
          * Optimized for English
          */
-        PhonemixAggressive
+        PhonemixAggressive,
+        /**
+         * Enhanced version differentiates between different vowel sounds and more accurate
+         */
+        PhonemixEnhanced
     }
 
     private TransformerType transformerType = TransformerType.PhonemixCompacting;
@@ -128,6 +132,9 @@ public class PhoneticTransformerBuilder {
         switch (transformerType) {
             case PhonemixAggressive:
                 return new PhonemixAggressiveTransformer(this);
+
+            case PhonemixEnhanced:
+                return new PhonemixEnhancedTransformer(this);
 
             default:
                 return new PhonemixCompactingTransformer(this);

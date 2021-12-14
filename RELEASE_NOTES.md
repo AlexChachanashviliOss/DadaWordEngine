@@ -25,4 +25,8 @@ Release notes
 
 1.5.0
 ---
-Convert to using jakarta. instead of javax. available in Tomcat10
+- Convert to using jakarta. instead of javax. available in Tomcat10
+
+1.5.1
+---
+- Upgrade Log4j to latest
