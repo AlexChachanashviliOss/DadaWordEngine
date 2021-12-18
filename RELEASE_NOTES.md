@@ -20,7 +20,7 @@ Release notes
 - Pronouns now have data for singular or plural forms
 - Better rhyming and support for rhymeWith attribute
 - Official Java 11 support (minimum version)
-- Fixed some data (motly in noun forms and spelling)
+- Fixed some data (mostly in noun forms and spelling)
 - More tests and more coverage
 
 1.5.0
@@ -30,3 +30,8 @@ Release notes
 1.5.1
 ---
 - Upgrade Log4j to latest
+
+1.5.2
+---
+- Add PhonemixEnhancedTransformer
+- Upgrade Log4j to latest (yet again)
