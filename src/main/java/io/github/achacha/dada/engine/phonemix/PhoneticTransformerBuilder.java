@@ -13,11 +13,14 @@ public class PhoneticTransformerBuilder {
         PhonemixCompacting,
         /**
          * Aggressive builds on compacting by removing non-compound vowels and sounds that tend to be silent
+         * Intended to match more
          * Optimized for English
          */
         PhonemixAggressive,
         /**
          * Enhanced version differentiates between different vowel sounds and more accurate
+         * Intended to match less and be more accurate
+         * Optimized for English
          */
         PhonemixEnhanced
     }
@@ -96,10 +99,21 @@ public class PhoneticTransformerBuilder {
 
     /**
      * Use aggressive transformer that ignores more non-essential sounds
+     * @see #withTransformer
      * @return {@link PhoneticTransformerBuilder} this
      */
     public PhoneticTransformerBuilder withAggressiveTransformer() {
         this.transformerType = TransformerType.PhonemixAggressive;
+        return this;
+    }
+
+    /**
+     * Use enhanced transformer that ignores more non-essential sounds
+     * @see #withTransformer
+     * @return {@link PhoneticTransformerBuilder} this
+     */
+    public PhoneticTransformerBuilder withEnhancedTransformer() {
+        this.transformerType = TransformerType.PhonemixEnhanced;
         return this;
     }
 

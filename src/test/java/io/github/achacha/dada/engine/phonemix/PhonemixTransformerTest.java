@@ -47,4 +47,11 @@ public class PhonemixTransformerTest {
         PhoneticTransformer transformer = PhoneticTransformerBuilder.builder().build();
         assertEquals("ak", transformer.transform("aqua "));
     }
+
+    @Test
+    public void testLeadingVowelRemoval() {
+        PhoneticTransformer transformer = PhoneticTransformerBuilder.builder().withIgnoreLeadingVowel().build();
+        assertEquals("zs", transformer.transform("This"));  // T should not be removed
+        assertEquals("t", transformer.transform("eight"));
+    }
 }

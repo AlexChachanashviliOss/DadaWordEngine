@@ -6,7 +6,7 @@
 
     <groupId>io.github.achacha</groupId>
     <artifactId>DadaWordEngine</artifactId>
-    <version>1.5.2</version>
+    <version>1.5.3-SNAPSHOT</version>
 
     <name>DaDa Word Engine</name>
     <description>Generic word parsing, construction and processing tool for generating sentences based on word types.</description>
@@ -36,6 +36,26 @@
         <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.8.0,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

@@ -110,6 +110,7 @@ public abstract class PhonemixTransformerBase implements PhoneticTransformer {
      */
     protected String transformWord(char[] word) {
         LOGGER.debug("=|word={}", word);
+        preprocess(word);
         int leftInWord = word.length;
         if (leftInWord > 2)
             transformTrigraph(word);
@@ -525,7 +526,14 @@ public abstract class PhonemixTransformerBase implements PhoneticTransformer {
     }
 
     /**
-     * Post processing and compacting
+     * Pre-processing
+     * @param s string
+     */
+    protected void preprocess(char[] s) {
+    }
+
+    /**
+     * Post-processing and compacting
      *
      * @param sentence char[]
      * @return String
