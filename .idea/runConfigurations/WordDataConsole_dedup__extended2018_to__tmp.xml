@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="WordDataConsole:dedup: extended2018 to /tmp" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="io.github.achacha.dada.tools.WordDataConsole" />
+    <module name="DadaWordEngine" />
+    <option name="PROGRAM_PARAMETERS" value="-action dedup -dataset extended2018 -outpath /tmp" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="io.github.achacha.dada.tools.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

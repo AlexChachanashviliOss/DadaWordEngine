@@ -18,13 +18,25 @@ public class WordDataConsole {
     private static final Options OPTIONS = buildOptions();
 
     private static final Map<String, Class<? extends BaseActionHandler>> ACTION_HANDLERS = Map.of(
-        "verify", ActionHandlerVerify.class,
-        "dedup", DedupActionHandler.class);
+            "verify", VerifyDatasetActionHandler.class,
+            "dedup", DedupActionHandler.class,
+            "randomXform", PhonemixActionHandler.class
+    );
 
     public static void main(String[] args) {
         if (args.length < 1) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("WordDataConsole", OPTIONS);
+            ACTION_HANDLERS.forEach((key, value) -> {
+                        try {
+                            BaseActionHandler bah = value.getConstructor().newInstance();
+                            System.out.println(key + ": " + bah.getHelp());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+            );
             return;
         }
 
@@ -55,9 +67,39 @@ public class WordDataConsole {
 
     private static Options buildOptions() {
         Options options = new Options();
-        options.addOption(Option.builder().argName("action").required().longOpt("action").hasArg(true).desc("Action of this operation").build());
-        options.addOption(Option.builder().argName("dataset").longOpt("dataset").hasArg(true).desc("Data set name [e.g. default, extended, dada2018, etc]").build());
-        options.addOption(Option.builder().argName("outpath").longOpt("outpath").hasArg(true).desc("Output path where result files get written").build());
+        options.addOption(
+                Option.builder()
+                        .argName("action")
+                        .required()
+                        .longOpt("action")
+                        .hasArg(true)
+                        .desc("Action of this operation")
+                        .build()
+        );
+        options.addOption(
+                Option.builder()
+                        .argName("dataset")
+                        .longOpt("dataset")
+                        .hasArg(true)
+                        .desc("Data set name [e.g. default, extended, dada2018, etc]")
+                        .build()
+        );
+        options.addOption(
+                Option.builder()
+                        .argName("outpath")
+                        .longOpt("outpath")
+                        .hasArg(true)
+                        .desc("Output path where result files get written")
+                        .build()
+        );
+        options.addOption(
+                Option.builder()
+                        .argName("phonemix")
+                        .longOpt("phonemix")
+                        .hasArg(true)
+                        .desc("Phonemix to use [e.g. compacting, aggressive, enhanced]")
+                        .build()
+        );
 
         return options;
     }

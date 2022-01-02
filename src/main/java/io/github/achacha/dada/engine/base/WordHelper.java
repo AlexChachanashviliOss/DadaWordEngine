@@ -20,6 +20,25 @@ public final class WordHelper {
     }
 
     /**
+     * @return true if is consonant (not a vowel, aeiou) and includes h and y
+     */
+    public static boolean isConsonant(char c) {
+        return !isVowel(c);
+    }
+
+    /**
+     * Consonants that shorted preceding vowels
+     * Voiceless fricatives: f, s, h
+     * Voiceless plosives: b, d, g
+     *
+     * @param c Character assumed lower case
+     * @return true if plosive
+     */
+    public static boolean isPrecedingVowelShortened(char c) {
+        return c == 'f' || c == 's' || c == 'h' || c == 'b' || c == 'd' || c == 'g';
+    }
+
+    /**
      * Get last character
      *
      * @param word String

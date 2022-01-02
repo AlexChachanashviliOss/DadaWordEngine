@@ -1,7 +1,7 @@
 package io.github.achacha.dada.engine.data;
 
-import io.github.achacha.dada.engine.phonemix.PhonemixAggressiveTransformer;
 import io.github.achacha.dada.engine.phonemix.PhonemixCompactingTransformer;
+import io.github.achacha.dada.engine.phonemix.PhonemixEnhancedTransformer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,10 +22,10 @@ public class AdjectiveTest {
     public void testLoadingAdjective() {
         WordsByType<Adjective> adjectives = new WordsByType<>(Word.Type.Adjective, "resource:/data/test/");
 
-        assertEquals("resource:/data/test/"+ Word.Type.Adjective.getTypeName()+".csv", adjectives.getResourcePath());
+        assertEquals("resource:/data/test/" + Word.Type.Adjective.getTypeName() + ".csv", adjectives.getResourcePath());
         assertEquals(Word.Type.Adjective, adjectives.getType());
-        assertEquals(PhonemixCompactingTransformer.class, adjectives.xformer.getClass());        // loaded via config.properties
-        assertEquals(PhonemixAggressiveTransformer.class, adjectives.xformerReverse.getClass()); // loaded via config.properties
+        assertEquals(PhonemixCompactingTransformer.class, adjectives.xformer.getClass());       // loaded via config.properties
+        assertEquals(PhonemixEnhancedTransformer.class, adjectives.xformerReverse.getClass());  // loaded via config.properties
         assertEquals(1, adjectives.getWordsData().size());
 
         Adjective adjective = adjectives.getWordsData().get(0);

@@ -161,11 +161,12 @@ public class AdjectiveRenderer extends BaseWordRenderer<Adjective> {
 
     @Override
     public void setForm(String formName) {
-        try {
-            this.form = Adjective.Form.valueOf(StringUtils.trim(formName).toLowerCase());
-        }
-        catch(IllegalArgumentException e) {
-            LOGGER.error("Invalid form name for this={} formName={}", this, formName);
+        if (StringUtils.isNotEmpty(formName)) {
+            try {
+                this.form = Adjective.Form.valueOf(StringUtils.trim(formName).toLowerCase());
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("Invalid form name for this={} formName={}", this, formName);
+            }
         }
     }
 

@@ -1,14 +1,16 @@
 package io.github.achacha.dada.engine.data;
 
-import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,7 +24,7 @@ public class WordsByTypeTest {
         assertNotNull(verbs.getWordsByPhonetic());
         assertNotNull(verbs.getWordBucketsByReversePhonetic());
         assertNotNull(verbs.getWordsData());
-        assertTrue(!verbs.toString().isEmpty());
+        assertFalse(verbs.toString().isEmpty());
     }
 
     @Test
@@ -68,7 +70,7 @@ public class WordsByTypeTest {
 
     @Test
     public void testReversePhonetics() {
-        Multimap<String, SavedWord> bucket = verbs.wordBucketsByReversePhonetic.get('m');
+        Map<String, Set<SavedWord>> bucket = verbs.wordBucketsByReversePhonetic.get('m');
         assertNotNull(bucket);
         assertEquals(3, bucket.size());
     }

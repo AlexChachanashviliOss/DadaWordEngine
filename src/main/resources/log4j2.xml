@@ -13,11 +13,14 @@
         <!--        <Logger name="io.github.achacha.dada.engine" level="info" additivity="false">-->
         <!--            <AppenderRef ref="Console"/>-->
         <!--        </Logger>-->
+        <Logger name="io.github.achacha.dada.engine.phonemix" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
 
-        <!-- Root debug level for base package -->
-        <!--        <Logger name="io.github.achacha" level="info" additivity="false">-->
-        <!--            <AppenderRef ref="Console"/>-->
-        <!--        </Logger>-->
+        Root debug level for base package
+        <Logger name="io.github.achacha" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="debug">
             <AppenderRef ref="Console"/>
         </Root>

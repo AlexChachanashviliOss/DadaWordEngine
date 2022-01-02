@@ -14,8 +14,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class DedupActionHandler implements BaseActionHandler {
+    @Override
+    public String getHelp() {
+        return "REQUIRES: -dataset, -outpath";
+    }
+
     /**
      * Remove duplicates and save to output location
+     *
      * @param cmd CommandLine with parameters
      * @param out PrintStream for output
      */
@@ -33,18 +39,18 @@ public class DedupActionHandler implements BaseActionHandler {
         }
         Path basePath = Paths.get(basePathString);
 
-        WordData wordData = new WordData("resource:/data/"+dataset);
-        wordData.getWordsByTypeStream().filter(WordsByType::isDuplicateFound).forEach(byType->{
-            out.println("Processing: "+byType.getType());
-            Path outfile = basePath.resolve(byType.getType().getTypeName()+".csv");
-            try(
+        WordData wordData = new WordData("resource:/data/" + dataset);
+        out.println("Processing dataset:  resource:/data/" + dataset);
+        wordData.getWordsByTypeStream().filter(WordsByType::isDuplicateFound).forEach(byType -> {
+            out.println("Duplicates detected, de-duping: " + byType.getType());
+            Path outfile = basePath.resolve(byType.getType().getTypeName() + ".csv");
+            try (
                     FileOutputStream fos = new FileOutputStream(outfile.toFile());
                     OutputStreamWriter osw = new OutputStreamWriter(fos, Charset.defaultCharset());
                     BufferedWriter writer = new BufferedWriter(osw)
             ) {
                 byType.writeWords(writer);
-            }
-            catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace(out);
             }
         });

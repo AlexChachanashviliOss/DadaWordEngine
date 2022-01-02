@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="WordDataConsole:randomXform:aggressive: extended2018" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="io.github.achacha.dada.tools.WordDataConsole" />
+    <module name="DadaWordEngine" />
+    <option name="PROGRAM_PARAMETERS" value="-action randomXform -dataset extended2018 -phonemix PhonemixAggressive" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="io.github.achacha.dada.tools.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

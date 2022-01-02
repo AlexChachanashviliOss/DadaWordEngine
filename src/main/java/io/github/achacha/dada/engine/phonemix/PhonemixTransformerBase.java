@@ -20,16 +20,20 @@ import java.util.stream.Collectors;
 /**
  * Given a string will transform into phonemix format
  * <p>
- *     Phonemix is a made-up word to represent form of a word converted and compacted into it's phoneme-like
- *     representation that can be used in forward and reverse
+ * Phonemix is a made-up word to represent form of a word converted and compacted into it's phoneme-like
+ * representation that can be used in forward and reverse
  * <p>
- * Algorithm is very loosely based on ideas in Russell Soundex (1918)
- * Original algorithm below was designed in 1993 by Alex Chachanashvili for Dada Wallpaper Poem BBS art project
- * Updates in 2004, 2017 by Alex Chachanashvili
- *
- * Algorithm is designed to be used forwards and backwards to allow sound based matching and rhyme detection
- * Some consonant pairs follow custom remapping based on American English
- * Aggressive compactor removes and compacts based on American English
+ * <p>
+ * Original compacting algorithm is very loosely based on ideas in Russell Soundex (1918)
+ * Compacting algorithm designed in 1993 by Alex Chachanashvili for Dada Wallpaper Poem BBS art project (updated in 2004)
+ * Aggressive algorithm designed in 2017 by Alex Chachanashvili for Dada poem generator and Discord bot, wider search results
+ * Enhanced algorithm designed in 2021 by Alex Chachanashvili for better rhyming and accurate search
+ * <p>
+ * <p>
+ * Algorithms are designed to be used forwards and backwards to allow sound based matching and rhyme detection
+ * {@link PhonemixCompactingTransformer} - Some consonant pairs follow custom remapping based on American English
+ * {@link PhonemixAggressiveTransformer} - Aggressive compactor removes and compacts based on American English
+ * {@link PhonemixEnhancedTransformer} - Enhanced extends vowel pronunciation based on proximity of other letters
  */
 public abstract class PhonemixTransformerBase implements PhoneticTransformer {
     protected static final Logger LOGGER = LogManager.getLogger(PhonemixTransformerBase.class);
@@ -89,8 +93,19 @@ public abstract class PhonemixTransformerBase implements PhoneticTransformer {
             return Collections.emptyList();
     }
 
+    @Override
+    public String toString() {
+        return "PhonemixTransformerBase{" +
+                "type=" + getClass().getSimpleName() +
+                ", startPos=" + startPos +
+                ", keepLeadingVowel=" + keepLeadingVowel +
+                ", reverse=" + reverse +
+                '}';
+    }
+
     /**
      * Apply any rules after xform of each text block
+     *
      * @param text String
      * @return String
      */
@@ -550,5 +565,69 @@ public abstract class PhonemixTransformerBase implements PhoneticTransformer {
             }
 
         return str.toString();
+    }
+
+    /**
+     * Get previous character, skipping over NONE
+     *
+     * @param s string
+     * @param i current position
+     * @return previous character or NONE if nothing before it
+     */
+    @VisibleForTesting
+    char getPrevious(char[] s, int i) {
+        while (--i >= 0) {
+            if (s[i] != NONE) {
+                return s[i];
+            }
+        }
+        return NONE;
+    }
+
+    /**
+     * Get next character, skipping over NONE
+     *
+     * @param s string
+     * @param i current position
+     * @return next character or NONE if nothing after it
+     */
+    char getNext(char[] s, int i) {
+        while (++i < s.length) {
+            if (s[i] != NONE) {
+                return s[i];
+            }
+        }
+        return NONE;
+    }
+
+    /**
+     * Get next after next character, skipping over NONE
+     *
+     * @param s string
+     * @param i current position
+     * @return next after next character or NONE if nothing after it
+     */
+    char getNextNext(char[] s, int i) {
+        boolean haveNext = false;
+        while (++i < s.length) {
+            if (s[i] != NONE) {
+                if (haveNext)
+                    return s[i];
+                else
+                    haveNext = true;
+            }
+        }
+        return NONE;
+    }
+
+    /**
+     * Check if character is a vowel
+     * Overridden for some transformers where vowels are extended beyond the usual suspects
+     *
+     * @param c character
+     * @return true if considered a vowel
+     */
+    protected boolean isVowel(char c) {
+        return WordHelper.isVowel(c);
     }
 }

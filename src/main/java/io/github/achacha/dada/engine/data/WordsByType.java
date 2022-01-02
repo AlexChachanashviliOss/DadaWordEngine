@@ -81,7 +81,8 @@ public class WordsByType<T extends Word> {
     /**
      * Last character phoneme mapped to Multimap of phonetic to word
      */
-    protected Map<Character, Multimap<String, SavedWord>> wordBucketsByReversePhonetic = new HashMap<>();
+//    protected Map<Character, Multimap<String, SavedWord>> wordBucketsByReversePhonetic = new HashMap<>();
+    protected Map<Character, Map<String, Set<SavedWord>>> wordBucketsByReversePhonetic = new HashMap<>();
 
     /**
      * Set to true if data contained duplicates, used for testings
@@ -125,8 +126,8 @@ public class WordsByType<T extends Word> {
                 String xformerTypeForwardName = properties.getProperty("phoneticTransformerForwardType", PhoneticTransformerBuilder.TransformerType.PhonemixCompacting.name());
                 String xformerTypeReverseName = properties.getProperty("phoneticTransformerReverseType", PhoneticTransformerBuilder.TransformerType.PhonemixCompacting.name());
 
-                LOGGER.info("Using forward phonetic transformer: "+xformerTypeForwardName);
-                LOGGER.info("Using reverse phonetic transformer: "+xformerTypeReverseName);
+                LOGGER.debug("Using forward phonetic transformer: " + xformerTypeForwardName);
+                LOGGER.debug("Using reverse phonetic transformer: " + xformerTypeReverseName);
                 this.xformer = PhoneticTransformerBuilder.builder()
                         .withTransformer(PhoneticTransformerBuilder.TransformerType.valueOf(xformerTypeForwardName))
                         .build();
@@ -295,8 +296,9 @@ public class WordsByType<T extends Word> {
             String reversePhonetic = xformerReverse.transform(formOfWord);
             if (reversePhonetic.length() > 0) {
                 Character last = reversePhonetic.charAt(0);
-                Multimap<String, SavedWord> bucket = wordBucketsByReversePhonetic.computeIfAbsent(last, LinkedListMultimap::create);
-                bucket.put(reversePhonetic, new SavedWord(word, formOfWord));
+                Map<String, Set<SavedWord>> bucket = wordBucketsByReversePhonetic.computeIfAbsent(last, HashMap::new);
+                Set<SavedWord> wordSet = bucket.computeIfAbsent(reversePhonetic, k -> new HashSet<>());
+                wordSet.add(new SavedWord(word, formName));
             }
         });
     }
@@ -368,7 +370,7 @@ public class WordsByType<T extends Word> {
     /**
      * @return Last character mapped to Multimap of phonetic form to Word list
      */
-    public Map<Character, Multimap<String, SavedWord>> getWordBucketsByReversePhonetic() {
+    public Map<Character, Map<String, Set<SavedWord>>> getWordBucketsByReversePhonetic() {
         return wordBucketsByReversePhonetic;
     }
 
@@ -380,18 +382,64 @@ public class WordsByType<T extends Word> {
      */
     public List<SavedWord> findRhymes(String source) {
         String reversePhonetic = getXformerReverse().transform(source);
-        Multimap<String, SavedWord> bucket = wordBucketsByReversePhonetic.get(reversePhonetic.charAt(0));
-        if (bucket != null) {
-            // Match last phonem
-            return bucket.entries().stream()
-                    .filter(
-                            entry -> entry.getKey().charAt(0) == reversePhonetic.charAt(0)
-                    )
-                    .map(Map.Entry::getValue)
-                    .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        } else
-            return Collections.emptyList();
+        LOGGER.debug("Checking for rhymes: {}", reversePhonetic);
 
+        Map<String, Set<SavedWord>> bucket = wordBucketsByReversePhonetic.get(reversePhonetic.charAt(0));
+        if (bucket != null) {
+            // Front are better rhymes, rear are not
+            final Map<String, SavedWord> rhymingWords = new HashMap<>(16);
+            final List<SavedWord> unequalRhyming3 = new ArrayList<>(16);
+            final List<SavedWord> unequalRhyming2 = new ArrayList<>(16);
+            bucket.forEach((key, value) -> {
+                LOGGER.debug("Checking: {} - {}", key, value);
+                if (
+                        reversePhonetic.length() > 2 && key.length() > 2
+                                && key.charAt(0) == reversePhonetic.charAt(0)
+                                && key.charAt(1) == reversePhonetic.charAt(1)
+                                && key.charAt(2) == reversePhonetic.charAt(2)
+                ) {
+                    // Match last 3 sounds
+                    if (key.length() == reversePhonetic.length())
+                        value.forEach(sw -> rhymingWords.put(sw.getWordString(), sw));
+                    else
+                        unequalRhyming3.addAll(value);
+                } else if (
+                        reversePhonetic.length() > 1 && key.length() > 1
+                                && key.charAt(0) == reversePhonetic.charAt(0)
+                                && key.charAt(1) == reversePhonetic.charAt(1)
+                ) {
+                    // Match last 2 sounds
+                    if (key.length() == reversePhonetic.length())
+                        value.forEach(sw -> rhymingWords.put(sw.getWordString(), sw));
+                    else
+                        unequalRhyming2.addAll(value);
+                }
+            });
+
+            // Check if we have enough good matches before resorting to 1 sound match
+            if (rhymingWords.size() < 10) {
+                unequalRhyming3.forEach(sw -> rhymingWords.put(sw.getWordString(), sw));
+            }
+            if (rhymingWords.size() < 10) {
+                unequalRhyming2.forEach(sw -> rhymingWords.put(sw.getWordString(), sw));
+            }
+
+            // Found nothing, lets try to match the last sound only
+            if (rhymingWords.isEmpty()) {
+                List<SavedWord> finalTry = bucket.entrySet().stream()
+                        .filter(entry -> entry.getKey().charAt(0) == reversePhonetic.charAt(0))
+                        .limit(1000)
+                        .map(Map.Entry::getValue)
+                        .collect(ArrayList::new, ArrayList::addAll, ArrayList::addAll);
+                LOGGER.debug("Rhymes (final try) for {}={}", reversePhonetic, finalTry);
+                return finalTry;
+            } else {
+                LOGGER.debug("Rhymes for {}={}", reversePhonetic, rhymingWords);
+                return new ArrayList<>(rhymingWords.values());
+            }
+        }
+        LOGGER.debug("Rhymes for {} not found", reversePhonetic);
+        return Collections.emptyList();
     }
 
     /**

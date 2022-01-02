@@ -2,6 +2,7 @@ package io.github.achacha.dada.engine.phonemix;
 
 /**
  * A more aggressive variant that remaps consonants and ignores all vowels
+ * Better for larger search results
  */
 public class PhonemixAggressiveTransformer extends PhonemixTransformerBase {
 

@@ -210,4 +210,36 @@ public class PhonemixTransformerBaseTest {
 
         assertOne(transformer, "k", "q");
     }
+
+    @Test
+    public void testAccess() {
+        PhonemixTransformerBase transformer = (PhonemixTransformerBase) PhoneticTransformerBuilder.builder().build();
+
+        assertEquals(NONE, transformer.getPrevious("".toCharArray(), 0));
+        assertEquals(NONE, transformer.getPrevious("ab".toCharArray(), 0));
+        assertEquals('a', transformer.getPrevious("ab".toCharArray(), 1));
+
+        assertEquals(NONE, transformer.getNext("".toCharArray(), 0));
+        assertEquals('b', transformer.getNext("ab".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNext("ab".toCharArray(), 1));
+    }
+
+    @Test
+    public void testNexts() {
+        PhonemixTransformerBase transformer = (PhonemixTransformerBase) PhoneticTransformerBuilder.builder().build();
+
+        assertEquals(NONE, transformer.getNext("".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNext("___".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNext("".toCharArray(), 1));
+        assertEquals(NONE, transformer.getNext("a".toCharArray(), 0));
+        assertEquals('a', transformer.getNext("__a".toCharArray(), 0));
+        assertEquals('b', transformer.getNext("ab_".toCharArray(), 0));
+
+        assertEquals(NONE, transformer.getNextNext("".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNextNext("___".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNextNext("_a__".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNextNext("a_b__".toCharArray(), 0));
+        assertEquals('c', transformer.getNextNext("ab__c".toCharArray(), 0));
+        assertEquals('c', transformer.getNextNext("ab__cd_".toCharArray(), 0));
+    }
 }

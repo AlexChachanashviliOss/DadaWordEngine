@@ -2,6 +2,8 @@ package io.github.achacha.dada.examples;
 
 import io.github.achacha.dada.engine.data.SavedWord;
 import io.github.achacha.dada.engine.data.WordData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,9 +14,12 @@ import java.util.stream.Collectors;
  * Given a noun, find other nouns that have a phonetic rhyme to it
  */
 public class FindWordsThatRhymeExample {
+    private final static Logger LOGGER = LogManager.getLogger(FindWordsThatRhymeExample.class);
+
     private static final String PROMPT = "\n\nEnter noun to try and rhyme (!q to quit)\n>";
 
     public static void main(String[] args) {
+        LOGGER.info("Resource base path: /data/extended2018");
         WordData wordData = new WordData("resource:/data/extended2018");
 
         System.out.print(PROMPT);
@@ -29,7 +34,7 @@ public class FindWordsThatRhymeExample {
             List<SavedWord> wordsMatched = wordData.getNouns().findRhymes(input);
             if (wordsMatched.size() > 0) {
                     List<String> allMatched = wordsMatched.stream()
-                            .map(SavedWord::getFormName)   // Get the word form that was used
+                            .map(SavedWord::getWordString)   // Get the word form that was used
                             .collect(Collectors.toList());
                     Collections.shuffle(allMatched);
 

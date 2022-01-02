@@ -5,12 +5,12 @@ import io.github.achacha.dada.engine.hyphen.HyphenData;
 
 /**
  * GlobalData is needed when rendering words, however we can build a custom {@link io.github.achacha.dada.engine.render.RenderContext} with custom data
- * Whenwe don't explicitly specify WordData or HyphenData, we lookup instance from here
- *
+ * When we don't explicitly specify WordData or HyphenData, we lookup instance from here
+ * <p>
  * Before Render engine comes up this needs to contain the WordData, HypenData, etc
  * You can preload it with specific data set using {@link #loadWordData(String)} and {@link #loadHyphenData(String)}
  * {@link #init()} will pre-load default data, otherwise default data is lazy-loaded
- *
+ * <p>
  * This is usually called when container is starting up and GlobalData.init() is enough to get good working data
  * However not required since it will lazy load
  */

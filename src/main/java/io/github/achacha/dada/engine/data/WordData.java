@@ -222,10 +222,11 @@ public class WordData {
     /**
      * List of words ordered as following: prepositions, conjunctions, pronouns, adverbs, adjectives, verbs, nouns
      * // TODO: May need better ordering and word selection
+     *
      * @return Stream of all WordsByType in this data set
      */
     @Nonnull
-    public Stream<WordsByType> getWordsByTypeStream() {
+    public Stream<WordsByType<? extends Word>> getWordsByTypeStream() {
         return Stream.of(prepositions, conjunctions, pronouns, adverbs, adjectives, verbs, nouns);
     }
 

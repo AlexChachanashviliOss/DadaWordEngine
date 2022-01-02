@@ -1,9 +1,18 @@
 Release notes
 (Started at version 1.3.5)
 
+1.5.3
+---
+
+- Upgrade log4j to latest due to exploit (versions 1.5.0, 1.5.1 and 1.5.2 are mostly log4j upgrades)
+- Initial work on PhonemixEnhanced which handles vowels better for rhyming
+- Added config.properties to allow selecting different phonemix for forwards and backwards transforms
+- Added more examples
+- Upgraded surefire to support junit 5
 
 1.3.5
 ---
+
 - Improved Sentence and SentenceRenderBuilder parsing and handling of text blocks
 - Better builders
 - Rendering supports external container for saved words and a custom Writer

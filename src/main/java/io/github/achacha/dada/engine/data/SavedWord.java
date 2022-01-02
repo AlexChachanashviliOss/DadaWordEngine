@@ -3,6 +3,7 @@ package io.github.achacha.dada.engine.data;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Saved word data
@@ -57,5 +58,18 @@ public class SavedWord {
     @Nonnull
     public String getFormName() {
         return form;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SavedWord)) return false;
+        SavedWord savedWord = (SavedWord) o;
+        return Objects.equals(word, savedWord.word) && Objects.equals(form, savedWord.form);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(word, form);
     }
 }
