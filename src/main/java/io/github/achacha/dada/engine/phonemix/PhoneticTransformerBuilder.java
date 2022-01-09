@@ -99,8 +99,9 @@ public class PhoneticTransformerBuilder {
 
     /**
      * Use aggressive transformer that ignores more non-essential sounds
-     * @see #withTransformer
+     *
      * @return {@link PhoneticTransformerBuilder} this
+     * @see #withTransformer
      */
     public PhoneticTransformerBuilder withAggressiveTransformer() {
         this.transformerType = TransformerType.PhonemixAggressive;
@@ -108,9 +109,21 @@ public class PhoneticTransformerBuilder {
     }
 
     /**
-     * Use enhanced transformer that ignores more non-essential sounds
-     * @see #withTransformer
+     * Use compacting transformer
+     *
      * @return {@link PhoneticTransformerBuilder} this
+     * @see #withTransformer
+     */
+    public PhoneticTransformerBuilder withCompactingTransformer() {
+        this.transformerType = TransformerType.PhonemixCompacting;
+        return this;
+    }
+
+    /**
+     * Use enhanced transformer that ignores more non-essential sounds
+     *
+     * @return {@link PhoneticTransformerBuilder} this
+     * @see #withTransformer
      */
     public PhoneticTransformerBuilder withEnhancedTransformer() {
         this.transformerType = TransformerType.PhonemixEnhanced;

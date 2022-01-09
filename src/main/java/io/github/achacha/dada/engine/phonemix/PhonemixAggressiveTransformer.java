@@ -30,20 +30,18 @@ public class PhonemixAggressiveTransformer extends PhonemixTransformerBase {
                 case 'y':
                 case 'Y':
                     if (i == 0 && keepLeadingVowel) {
-                        LOGGER.debug(" | Keeping leading vowel (aggressive form), i={} s={}", i, s);
+                        LOGGER.debug("[a] Keeping leading vowel (aggressive form), i={} s={}", i, s);
                     }
                     else {
-                        LOGGER.debug(" < vowel removal, i={} s={}", i, s);
                         s[i] = NONE;
-                        LOGGER.debug(" > ?->_, i={} s={}", i, s);
+                        LOGGER.debug("[a] {vowel}->_, i={} s={}", i, s);
                     }
                     break;
 
 
                 case 'q':
-                    LOGGER.debug(" < q detected, i={} s={}", i, s);
                     s[i] = 'k';
-                    LOGGER.debug(" > q->k, i={} s={}", i, s);
+                    LOGGER.debug("[a] q->k, i={} s={}", i, s);
                     break;
             }
         }

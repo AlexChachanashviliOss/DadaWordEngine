@@ -4,6 +4,11 @@ import javax.annotation.Nonnull;
 
 public final class WordHelper {
     /**
+     * Consonants
+     */
+    public static final String CONSONANTS = "bcdfghjklmnpqrstvwxz";
+
+    /**
      * @param c Character assumed lower case
      * @return true if aeiou
      */
@@ -20,10 +25,17 @@ public final class WordHelper {
     }
 
     /**
-     * @return true if is consonant (not a vowel, aeiou) and includes h and y
+     * @return true if is consonant, excludes y
      */
     public static boolean isConsonant(char c) {
-        return !isVowel(c);
+        return CONSONANTS.indexOf(c) >= 0;
+    }
+
+    /**
+     * @return true if is consonant, includes y
+     */
+    public static boolean isConsonantOrY(char c) {
+        return c == 'y' || CONSONANTS.indexOf(c) >= 0;
     }
 
     /**

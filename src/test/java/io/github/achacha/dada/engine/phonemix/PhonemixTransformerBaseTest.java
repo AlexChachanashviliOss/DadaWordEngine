@@ -22,7 +22,7 @@ public class PhonemixTransformerBaseTest {
         PhoneticTransformer transformer = PhoneticTransformerBuilder.builder().build();
 
         String input = "Hello World, this is a test!";
-        List<Pair<String,Integer>> list = transformer.transformAndIndex(input);
+        List<Pair<String, Integer>> list = transformer.transformAndIndex(input);
 
         String transformedWords = list.stream().map(Pair::getLeft).collect(Collectors.joining(","));
         List<Integer> offsets = list.stream().map(Pair::getRight).collect(Collectors.toList());
@@ -42,7 +42,7 @@ public class PhonemixTransformerBaseTest {
         PhoneticTransformer transformer = PhoneticTransformerBuilder.builder().withReverse().build();
 
         String input = "Hello World, this is a test!";
-        List<Pair<String,Integer>> list = transformer.transformAndIndex(input);
+        List<Pair<String, Integer>> list = transformer.transformAndIndex(input);
 
         String transformedWords = list.stream().map(Pair::getLeft).collect(Collectors.joining(","));
         List<Integer> offsets = list.stream().map(Pair::getRight).collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class PhonemixTransformerBaseTest {
 
         assertEquals("hl", transformer.transform("PROMPT> Hello"));
 
-        List<Pair<String,Integer>> indexed = transformer.transformAndIndex("PROMPT> Hello");
+        List<Pair<String, Integer>> indexed = transformer.transformAndIndex("PROMPT> Hello");
         assertEquals(1, indexed.size());
         assertEquals("hl", indexed.get(0).getLeft());
         assertEquals(8, indexed.get(0).getRight().intValue());
@@ -112,92 +112,97 @@ public class PhonemixTransformerBaseTest {
 
     @Test
     public void testCompactingTrigraph() {
-        PhonemixTransformerBase transformer = (PhonemixTransformerBase)PhoneticTransformerBuilder.builder().build();
+        PhonemixTransformerBase transformer = (PhonemixTransformerBase) PhoneticTransformerBuilder.builder().build();
 
         // c
-        assertThree(transformer,"_Sa", "cia");
-        assertThree(transformer,"_So", "cio");
-        assertThree(transformer,"cid", "cid");
+        assertThree(transformer, "_Sa", "cia");
+        assertThree(transformer, "_So", "cio");
+        assertThree(transformer, "cid", "cid");
 
         // g
-        assertThree(transformer,"__t", "ght");
+        assertThree(transformer, "__t", "ght");
 
         // s
-        assertThree(transformer,"_sk", "sch");
-        assertThree(transformer,"ska", "sca");
-        assertThree(transformer,"_se", "sce");
-        assertThree(transformer,"_si", "sci");
-        assertThree(transformer,"sko", "sco");
-        assertThree(transformer,"sku", "scu");
+        assertThree(transformer, "_sk", "sch");
+        assertThree(transformer, "ska", "sca");
+        assertThree(transformer, "_se", "sce");
+        assertThree(transformer, "_si", "sci");
+        assertThree(transformer, "sko", "sco");
+        assertThree(transformer, "sku", "scu");
 
         // w
-        assertThree(transformer,"_hO", "who");
-        assertThree(transformer,"whe", "whe");  // digraphs handle this case
+        assertThree(transformer, "_hO", "who");
+        assertThree(transformer, "whe", "whe");  // digraphs handle this case
     }
 
     @Test
     public void testCompactingDigraph() {
-        PhonemixTransformerBase transformer = (PhonemixTransformerBase)PhoneticTransformerBuilder.builder().build();
+        PhonemixTransformerBase transformer = (PhonemixTransformerBase) PhoneticTransformerBuilder.builder()
+                .withCompactingTransformer()
+                .build();
 
         // a
-        assertTwo(transformer,"_O", "au");
+        assertTwo(transformer, "_O", "au");
 
         // c
-        assertTwo(transformer,"ka", "ca");
-        assertTwo(transformer,"ko", "co");
-        assertTwo(transformer,"ku", "cu");
+        assertTwo(transformer, "ka", "ca");
+        assertTwo(transformer, "ko", "co");
+        assertTwo(transformer, "ku", "cu");
 
-        assertTwo(transformer,"_k", "cc");
-        assertTwo(transformer,"_k", "ck");
+        assertTwo(transformer, "_k", "cc");
+        assertTwo(transformer, "_k", "ck");
 
-        assertTwo(transformer,"se", "ce");
-        assertTwo(transformer,"si", "ci");
+        assertTwo(transformer, "se", "ce");
+        assertTwo(transformer, "si", "ci");
 
-        assertTwo(transformer,"_C", "ch");
+        assertTwo(transformer, "_C", "ch");
 
         // d
-        assertTwo(transformer,"_j", "dg");
+        assertTwo(transformer, "_j", "dg");
 
         // e
-        assertTwo(transformer,"_u", "eu");
+        assertTwo(transformer, "_u", "eu");
 
         // g
-        assertTwo(transformer,"_f", "gh");    // End of word
-        assertTwo(transformer,"_go", "gho");  // Not end of word
-        assertTwo(transformer,"_n", "gn");
+        assertTwo(transformer, "_f", "gh");    // End of word
+        assertTwo(transformer, "_go", "gho");  // Not end of word
+        assertTwo(transformer, "_n", "gn");
 
         // k
-        assertTwo(transformer,"_n", "kn");
+        assertTwo(transformer, "_n", "kn");
 
         // o
-        assertTwo(transformer,"_O", "oo");
-        assertTwo(transformer,"_O", "ou");
+        assertTwo(transformer, "_O", "oo");
+        assertTwo(transformer, "_O", "ou");
 
         // p
-        assertTwo(transformer,"_f", "ph");
-        assertTwo(transformer,"_s", "ps");
+        assertTwo(transformer, "_f", "ph");
+        assertTwo(transformer, "_s", "ps");
 
         // t
-        assertTwo(transformer,"_z", "th");
-        assertTwo(transformer,"o_S", "oti");  // sh sound when following vowel
-        assertTwo(transformer,"cti", "cti");  // ti not changed
+        assertTwo(transformer, "_z", "th");
+        assertTwo(transformer, "o_S", "oti");  // sh sound when following vowel
+        assertTwo(transformer, "cti", "cti");  // ti not changed
 
         // s
-        assertTwo(transformer,"_s", "sc");    // trigraph handles sc[aeiouh]
-        assertTwo(transformer,"_S", "sh");
+        assertTwo(transformer, "_s", "sc");    // trigraph handles sc[aeiouh]
+        assertTwo(transformer, "_S", "sh");
+
+        // u
+        assertTwo(transformer, "_u", "ue");
 
         // w
-        assertTwo(transformer,"_w", "wh");
-        assertTwo(transformer,"_r", "wr");
+        assertTwo(transformer, "_w", "wh");
+        assertTwo(transformer, "_r", "wr");
 
         // z
-        assertTwo(transformer,"tz", "zz");
-        assertTwo(transformer,"_z", "zh");
+        assertTwo(transformer, "tz", "zz");
+        assertTwo(transformer, "_z", "zh");
     }
 
     @Test
     public void testCompactingOne() {
-        PhonemixTransformerBase transformer = (PhonemixTransformerBase)PhoneticTransformerBuilder.builder().build();
+        PhonemixTransformerBase transformer = (PhonemixTransformerBase) PhoneticTransformerBuilder.builder().build();
 
         // Vowel
         assertOne(transformer, "a", "a");   // Leading vowel kept
@@ -228,6 +233,7 @@ public class PhonemixTransformerBaseTest {
     public void testNexts() {
         PhonemixTransformerBase transformer = (PhonemixTransformerBase) PhoneticTransformerBuilder.builder().build();
 
+        // next
         assertEquals(NONE, transformer.getNext("".toCharArray(), 0));
         assertEquals(NONE, transformer.getNext("___".toCharArray(), 0));
         assertEquals(NONE, transformer.getNext("".toCharArray(), 1));
@@ -235,11 +241,22 @@ public class PhonemixTransformerBaseTest {
         assertEquals('a', transformer.getNext("__a".toCharArray(), 0));
         assertEquals('b', transformer.getNext("ab_".toCharArray(), 0));
 
+        // next next
         assertEquals(NONE, transformer.getNextNext("".toCharArray(), 0));
         assertEquals(NONE, transformer.getNextNext("___".toCharArray(), 0));
         assertEquals(NONE, transformer.getNextNext("_a__".toCharArray(), 0));
         assertEquals(NONE, transformer.getNextNext("a_b__".toCharArray(), 0));
         assertEquals('c', transformer.getNextNext("ab__c".toCharArray(), 0));
         assertEquals('c', transformer.getNextNext("ab__cd_".toCharArray(), 0));
+
+        // next next next
+        assertEquals(NONE, transformer.getNextNextNext("".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNextNextNext("____".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNextNextNext("_a__".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNextNextNext("a_b__".toCharArray(), 0));
+        assertEquals(NONE, transformer.getNextNextNext("a_b_c_".toCharArray(), 0));
+        assertEquals('d', transformer.getNextNextNext("ab__c_d".toCharArray(), 0));
+        assertEquals('d', transformer.getNextNextNext("ab__cd_e_".toCharArray(), 0));
     }
+
 }

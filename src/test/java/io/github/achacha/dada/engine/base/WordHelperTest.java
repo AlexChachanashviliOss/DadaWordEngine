@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WordHelperTest {
     @Test
-    public void testIs() {
+    public void testIsVowel() {
         assertTrue(WordHelper.isVowel('a'));
         assertTrue(WordHelper.isVowel('e'));
         assertTrue(WordHelper.isVowel('i'));
@@ -24,6 +24,19 @@ public class WordHelperTest {
         assertTrue(WordHelper.isVowelOrH('u'));
         assertTrue(WordHelper.isVowelOrH('h'));
         assertFalse(WordHelper.isVowelOrH('b'));
+    }
+
+    @Test
+    public void testIsConsonant() {
+        assertFalse(WordHelper.isConsonant('y'));
+        assertTrue(WordHelper.isConsonant('h'));
+        assertTrue(WordHelper.isConsonant('b'));
+        assertTrue(WordHelper.isConsonant('z'));
+
+        assertTrue(WordHelper.isConsonantOrY('y'));
+        assertTrue(WordHelper.isConsonantOrY('h'));
+        assertTrue(WordHelper.isConsonantOrY('f'));
+        assertTrue(WordHelper.isConsonantOrY('w'));
     }
 
     @Test

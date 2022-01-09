@@ -1,7 +1,7 @@
 package io.github.achacha.dada.engine.phonemix;
 
 
-import static io.github.achacha.dada.engine.base.WordHelper.isConsonant;
+import static io.github.achacha.dada.engine.base.WordHelper.isConsonantOrY;
 
 /**
  * More accurate vowel and sound representation
@@ -47,59 +47,59 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                 // th to ż
                 s[i++] = 'ż';
                 s[i] = NONE;
-                LOGGER.debug(" > th->ż, i={} s={}", i, s);
+                LOGGER.debug("[e] th->ż, i={} s={}", i, s);
             } else if (match(s, i, 's', 's')) {
                 // ss to ß
                 s[i++] = 'ß';
                 s[i] = NONE;
-                LOGGER.debug(" > ss->ß, i={} s={}", i, s);
+                LOGGER.debug("[e] ss->ß, i={} s={}", i, s);
             } else if (match(s, i, 's', 'h')) {
                 // sh to ś
                 s[i++] = 'ś';
                 s[i] = NONE;
-                LOGGER.debug(" > sh->ś, i={} s={}", i, s);
+                LOGGER.debug("[e] sh->ś, i={} s={}", i, s);
             } else if (match(s, i, 's', 'c', 'h')) {
                 // sch to š
                 s[i++] = 'š';
                 s[i++] = NONE;
                 s[i] = NONE;
-                LOGGER.debug(" > sch->š, i={} s={}", i, s);
+                LOGGER.debug("[e] sch->š, i={} s={}", i, s);
             } else if (match(s, i, 't', 'c', 'h')) {
                 // tch to ć
                 s[i++] = 'ć';
                 s[i++] = NONE;
                 s[i] = NONE;
-                LOGGER.debug(" > ch->ć, i={} s={}", i, s);
+                LOGGER.debug("[e] ch->ć, i={} s={}", i, s);
             } else if (match(s, i, 'c', 'h')) {
                 // ch to ć
                 s[i++] = 'ć';
                 s[i] = NONE;
-                LOGGER.debug(" > ch->ć, i={} s={}", i, s);
+                LOGGER.debug("[e] ch->ć, i={} s={}", i, s);
             } else if (match(s, i, 't', 'z')) {
                 // tz to ż
                 s[i++] = 'ż';
                 s[i] = NONE;
-                LOGGER.debug(" > tz->ż, i={} s={}", i, s);
+                LOGGER.debug("[e] tz->ż, i={} s={}", i, s);
             } else if (match(s, i, 'z', 'z')) {
                 // zz to č
                 s[i++] = 'č';
                 s[i] = NONE;
-                LOGGER.debug(" > zz->č, i={} s={}", i, s);
+                LOGGER.debug("[e] zz->č, i={} s={}", i, s);
             } else if (match(s, i, 'c', 'k')) {
                 // cc to k
                 s[i++] = 'k';
                 s[i] = NONE;
-                LOGGER.debug(" > ck->k, i={} s={}", i, s);
+                LOGGER.debug("[e] ck->k, i={} s={}", i, s);
             } else if (match(s, i, 'c', 'c')) {
                 // cc to k
                 s[i++] = 'k';
                 s[i] = NONE;
-                LOGGER.debug(" > cc->k, i={} s={}", i, s);
+                LOGGER.debug("[e] cc->k, i={} s={}", i, s);
             } else if (match(s, i, 'q', 'u')) {
                 // cc to k
                 s[i++] = 'k';
                 s[i] = 'w';
-                LOGGER.debug(" > qu->kw, i={} s={}", i, s);
+                LOGGER.debug("[e] qu->kw, i={} s={}", i, s);
             }
         }
     }
@@ -110,7 +110,7 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                 case 'q':
                     // q by itself becomes k (qu handled in transformTwo)
                     s[i] = 'k';
-                    LOGGER.debug(" > q->k, i={} s={}", i, s);
+                    LOGGER.debug("[e] q->k, i={} s={}", i, s);
                     break;
             }
         }
@@ -149,13 +149,13 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     s[i] = 'á';         // e after ay causes ai
                     s[i + 1] = NONE;
                     s[i + 2] = NONE;
-                    LOGGER.debug(" > aye->á, i={} s={}", i, s);
+                    LOGGER.debug("[e] aye->á, i={} s={}", i, s);
                     return 2;
                 }
                 if (match(s, i, 'a', 'y')) {
                     s[i] = 'á';         // e after ay causes ai
                     s[i + 1] = NONE;
-                    LOGGER.debug(" > ay->á, i={} s={}", i, s);
+                    LOGGER.debug("[e] ay->á, i={} s={}", i, s);
                     return 1;
                 }
                 if (match(s, i, 'a', 'l', 'l')) {
@@ -163,22 +163,30 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     s[i] = 'o';
                     s[i + 1] = 'l';
                     s[i + 2] = NONE;
-                    LOGGER.debug(" > all->ol, i={} s={}", i, s);
+                    LOGGER.debug("[e] all->ol, i={} s={}", i, s);
                     return 2;
                 }
 
-                if (isConsonant(getNext(s, i)) && getNextNext(s, i) == 'e') {
+                if (isConsonantOrY(getNext(s, i)) && getNextNext(s, i) == 'e') {
                     // a{consonant}e -> á{consonant} and drop e
                     s[i] = 'á';
-                    s[i + 2] = NONE;
-                    LOGGER.debug(" > a{consonant}e->a{consonant}, i={} s={}", i, s);
-                    return 2;
+                    char next3 = getNextNextNext(s, i);
+                    if (next3 == NONE) {
+                        s[i + 2] = NONE;
+                        LOGGER.debug("[e] a{consonant}e$->á{consonant}$, i={} s={}", i, s);
+                        return 2;
+                    } else {
+                        // Don't drop e if there is a letter after it
+                        LOGGER.debug("[e] a{consonant}e?->á{consonant}e?, i={} s={}", i, s);
+                        return 1;
+                    }
+
                 }
 
                 char next = getNext(s, i);
                 if (next == 'r' || next == 'b' || next == 't' || next == 'f') {
                     s[i] = 'à';         // ah sound
-                    LOGGER.debug(" > a->à (ah), i={} s={}", i, s);
+                    LOGGER.debug("[e] a->à (ah), i={} s={}", i, s);
                     return 0;
                 }
             }
@@ -189,44 +197,60 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                 if (next == 'e' || next == 'i' || next == 'y') {
                     // c sounds like s
                     s[i] = 's';
-                    LOGGER.debug(" < c->k, i={} s={}", i, s);
+                    LOGGER.debug("[e] c->k, i={} s={}", i, s);
                     return 0;
                 }
-                if (next == 'a' || next == 'o' || next == 'u' || isConsonant(next)) {
+                if (next == 'a' || next == 'o' || next == 'u' || isConsonantOrY(next)) {
                     // c sounds like k
                     s[i] = 'k';
-                    LOGGER.debug(" < c->k, i={} s={}", i, s);
+                    LOGGER.debug("[e] c->k, i={} s={}", i, s);
                     return 0;
                 }
             }
             break;
 
             case 'e': {
-                if (
-                        match(s, i, 'e', 'e')
-                                || match(s, i, 'e', 'a')
-                ) {
-                    s[i] = 'ë';
-                    s[i + 1] = NONE;
-                    LOGGER.debug(" > e[ea]->ë, i={} s={}", i, s);
-                    return 1;
-                }
-
                 char next = getNext(s, i);
-                if (next == 'w') {
-                    // ew -> ū
-                    s[i] = 'ū';
+                if (next == 'y') {
+                    // ey -> á
+                    s[i] = 'á';
                     s[i + 1] = NONE;
-                    LOGGER.debug(" > ew->ū, i={} s={}", i, s);
+                    LOGGER.debug("[e] ey->á, i={} s={}", i, s);
                     return 1;
                 }
 
                 char next2 = getNextNext(s, i);
-                if (isConsonant(next) && next2 == 'e') {
+                if (next == 'a' && next2 == 'u') {
+                    s[i] = 'ü';
+                    s[i + 1] = NONE;
+                    s[i + 2] = NONE;
+                    LOGGER.debug("[e] eau->ü, i={} s={}", i, s);
+                    return 2;
+                }
+
+                if (
+                        next == 'e'
+                                || next == 'a'
+                ) {
+                    s[i] = 'ë';
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] e[ea]->ë, i={} s={}", i, s);
+                    return 1;
+                }
+
+                if (next == 'w') {
+                    // ew -> ū
+                    s[i] = 'ū';
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] ew->ū, i={} s={}", i, s);
+                    return 1;
+                }
+
+                if (isConsonantOrY(next) && next2 == 'e') {
                     // a{consonant}e -> á{consonant} and drop e
                     s[i] = 'é';
                     s[i + 2] = 'é';
-                    LOGGER.debug(" > e{consonant}e->é{consonant}é, i={} s={}", i, s);
+                    LOGGER.debug("[e] e{consonant}e->é{consonant}é, i={} s={}", i, s);
                     return 2;
                 }
             }
@@ -239,15 +263,15 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     s[i] = 'í';
                     s[i + 1] = NONE;
                     s[i + 2] = NONE;
-                    LOGGER.debug(" > igh->í, i={} s={}", i, s);
+                    LOGGER.debug("[e] igh->í, i={} s={}", i, s);
                     return 2;
                 }
 
-                if (isConsonant(next) && next2 == 'e') {
+                if (isConsonantOrY(next) && next2 == 'e') {
                     // a{consonant}e -> á{consonant} and drop e
                     s[i] = 'í';
                     s[i + 2] = NONE;
-                    LOGGER.debug(" > i{consonant}e->í{consonant}, i={} s={}", i, s);
+                    LOGGER.debug("[e] i{consonant}e->í{consonant}, i={} s={}", i, s);
                     return 2;
                 }
 
@@ -256,7 +280,7 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     s[i] = 'i';
                     s[i + 1] = 'l';
                     s[i + 2] = NONE;
-                    LOGGER.debug(" > ill->il, i={} s={}", i, s);
+                    LOGGER.debug("[e] ill->il, i={} s={}", i, s);
                     return 2;
                 }
 
@@ -269,17 +293,17 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                 // bother
                 char next = getNext(s, i);
                 if (
-                        isConsonant(getPrevious(s, i))
+                        isConsonantOrY(getPrevious(s, i))
                                 && (isHiss(next) || next == 'k')
                 ) {
                     if (isVowel(next)) {
                         // in 'bother' o becomes ä due to vowel after hiss
                         s[i] = 'ä';
-                        LOGGER.debug(" > o{hiss/k}{vowel}->ä, i={} s={}", i, s);
+                        LOGGER.debug("[e] o{hiss/k}{vowel}->ä, i={} s={}", i, s);
                     } else {
                         // in 'both' o becomes ö
                         s[i] = 'ö';
-                        LOGGER.debug(" > o{hiss/k}->ö, i={} s={}", i, s);
+                        LOGGER.debug("[e] o{hiss/k}->ö, i={} s={}", i, s);
                     }
                     return 1;
                 }
@@ -287,14 +311,14 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     // oo
                     s[i] = 'ō';
                     s[i + 1] = NONE;
-                    LOGGER.debug(" > oo->ō, i={} s={}", i, s);
+                    LOGGER.debug("[e] oo->ō, i={} s={}", i, s);
                     return 1;
                 }
                 if (next == 'w') {
                     // ow
                     s[i] = 'ó';
                     s[i + 1] = NONE;
-                    LOGGER.debug(" > ow->ó, i={} s={}", i, s);
+                    LOGGER.debug("[e] ow->ó, i={} s={}", i, s);
                     return 1;
                 }
 
@@ -305,22 +329,29 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                         // {short consonant}our -> ûr
                         s[i] = 'û';
                         s[i + 1] = NONE;
-                        LOGGER.debug(" > our->ûr, i={} s={}", i, s);
+                        LOGGER.debug("[e] our->ûr, i={} s={}", i, s);
                     } else {
                         // ou
                         s[i] = 'œ';
                         s[i + 1] = NONE;
-                        LOGGER.debug(" > ou->œ, i={} s={}", i, s);
+                        LOGGER.debug("[e] ou->œ, i={} s={}", i, s);
                     }
                     return 1;
                 }
 
-                if (isConsonant(next) && next2 == 'e') {
-                    // o{consonant}e -> ó{consonant} and drop e
-                    s[i] = 'ó';
-                    s[i + 2] = NONE;
-                    LOGGER.debug(" > o{consonant}e->ó{consonant}, i={} s={}", i, s);
-                    return 2;
+                if (isConsonantOrY(next) && next2 == 'e') {
+                    if (isConsonantOrY(getNextNextNext(s, i))) {
+                        // o{consonant}e -> ó{consonant} and drop e
+                        s[i] = 'ó';
+                        LOGGER.debug("[e] o{consonant}e{consonant}->ó{consonant}e{consonant}, i={} s={}", i, s);
+                        return 0;
+                    } else {
+                        // o{consonant}e -> ó{consonant} and drop e
+                        s[i] = 'ó';
+                        s[i + 2] = NONE;
+                        LOGGER.debug("[e] o{consonant}e->ó{consonant}, i={} s={}", i, s);
+                        return 2;
+                    }
                 }
             }
             break;
@@ -330,8 +361,21 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                 if (next == 'i') {
                     // ti -> śi  (sh sound)
                     s[i] = 'ś';
-                    LOGGER.debug(" > ti->śi, i={} s={}", i, s);
+                    LOGGER.debug("[e] ti->śi, i={} s={}", i, s);
                     return 0;
+                }
+            }
+            break;
+
+            case 't': {
+                char next = getNext(s, i);
+                char next2 = getNextNext(s, i);
+                if (next == 'i' && isVowel(next2)) {
+                    // ti{vowel} -> ś_{vowel}  (sh sound)
+                    s[i] = 'ś';
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] ti{vowel}->ś_{vowel}, i={} s={}", i, s);
+                    return 1;
                 }
             }
             break;
@@ -339,11 +383,19 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
             case 'u': {
                 char next = getNext(s, i);
                 char next2 = getNextNext(s, i);
-                if (isConsonant(next) && next2 == 'e') {
+                if (next == 'e') {
+                    // ue -> ú
+                    s[i] = 'ú';
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] ue->ú, i={} s={}", i, s);
+                    return 1;
+                }
+
+                if (isConsonantOrY(next) && next2 == 'e') {
                     // u{consonant}e -> ú{consonant} and drop e
                     s[i] = 'ú';
                     s[i + 2] = NONE;
-                    LOGGER.debug(" > u{consonant}e->ú{consonant}, i={} s={}", i, s);
+                    LOGGER.debug("[e] u{consonant}e->ú{consonant}, i={} s={}", i, s);
                     return 2;
                 }
 
@@ -352,15 +404,15 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     s[i] = 'ō';
                     s[i + 1] = 'l';
                     s[i + 2] = NONE;
-                    LOGGER.debug(" > ull->ōl, i={} s={}", i, s);
+                    LOGGER.debug("[e] ull->ōl, i={} s={}", i, s);
                     return 2;
                 }
 
                 char prev = getPrevious(s, i);
-                if (isConsonant(prev) && next == 'r') {
+                if (isConsonantOrY(prev) && next == 'r') {
                     // {consonant}ur -> û
                     s[i] = 'û';
-                    LOGGER.debug(" > {consonant}u{consonant}->û, i={} s={}", i, s);
+                    LOGGER.debug("[e] {consonant}u{consonant}->û, i={} s={}", i, s);
                     return 0;
                 }
             }
@@ -371,19 +423,19 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                 if (next == NONE && match('l', s, i, 'y')) {
                     // -ly becomes ë
                     s[i] = 'ë';
-                    LOGGER.debug(" > -ly->ë, i={} s={}", i, s);
+                    LOGGER.debug("[e] -ly->ë, i={} s={}", i, s);
                     return 0;
                 }
-                if (isConsonant(next)) {
+                if (isConsonantOrY(next)) {
                     // y followed by consonant becomes í
                     s[i] = 'í';
-                    LOGGER.debug(" > y{consonant}->í, i={} s={}", i, s);
+                    LOGGER.debug("[e] y{consonant}->í, i={} s={}", i, s);
                     return 0;
                 } else if (next != NONE) {
                     // y followed by vowel becomes í and drops vowel
                     s[i] = 'í';
                     s[i + 1] = NONE;
-                    LOGGER.debug(" > y{vowel}->í, i={} s={}", i, s);
+                    LOGGER.debug("[e] y{vowel}->í, i={} s={}", i, s);
                     return 1;
                 }
             }
