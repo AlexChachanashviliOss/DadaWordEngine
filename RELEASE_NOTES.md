@@ -9,6 +9,7 @@ Release notes
 - Added config.properties to allow selecting different phonemix for forwards and backwards transforms
 - Added more examples
 - Upgraded surefire to support junit 5
+- More tests
 
 1.3.5
 ---

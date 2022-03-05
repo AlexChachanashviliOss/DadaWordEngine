@@ -19,17 +19,17 @@ import java.util.stream.Collectors;
 
 /**
  * Given a string will transform into phonemix format
- * <p>
+ * <br>
  * Phonemix is a made-up word to represent form of a word converted and compacted into it's phoneme-like
  * representation that can be used in forward and reverse
- * <p>
- * <p>
+ * <br>
+ * <br>
  * Original compacting algorithm is very loosely based on ideas in Russell Soundex (1918)
  * Compacting algorithm designed in 1993 by Alex Chachanashvili for Dada Wallpaper Poem BBS art project (updated in 2004)
  * Aggressive algorithm designed in 2017 by Alex Chachanashvili for Dada poem generator and Discord bot, wider search results
  * Enhanced algorithm designed in 2021 by Alex Chachanashvili for better rhyming and accurate search
- * <p>
- * <p>
+ * <br>
+ * <br>
  * Algorithms are designed to be used forwards and backwards to allow sound based matching and rhyme detection
  * {@link PhonemixCompactingTransformer} - Some consonant pairs follow custom remapping based on American English
  * {@link PhonemixAggressiveTransformer} - Aggressive compactor removes and compacts based on American English

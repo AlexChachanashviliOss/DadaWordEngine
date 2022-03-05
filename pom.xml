@@ -6,7 +6,7 @@
 
     <groupId>io.github.achacha</groupId>
     <artifactId>DadaWordEngine</artifactId>
-    <version>1.5.3-SNAPSHOT</version>
+    <version>1.5.4-SNAPSHOT</version>
 
     <name>DaDa Word Engine</name>
     <description>Generic word parsing, construction and processing tool for generating sentences based on word types.</description>

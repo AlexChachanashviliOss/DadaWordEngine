@@ -25,6 +25,7 @@ public final class WordHelper {
     }
 
     /**
+     * @param c character to test
      * @return true if is consonant, excludes y
      */
     public static boolean isConsonant(char c) {
@@ -32,6 +33,7 @@ public final class WordHelper {
     }
 
     /**
+     * @param c character to test
      * @return true if is consonant, includes y
      */
     public static boolean isConsonantOrY(char c) {

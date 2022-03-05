@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Configuration status="debug">
+<Configuration status="info">
     <Properties>
         <Property name="layout">%d{HH:mm:ss.SSS} [%t] %-5level %logger{3}(%class{1}.%method:%line) %msg%n</Property>
     </Properties>
@@ -13,15 +13,15 @@
         <!--        <Logger name="io.github.achacha.dada.engine" level="info" additivity="false">-->
         <!--            <AppenderRef ref="Console"/>-->
         <!--        </Logger>-->
-        <Logger name="io.github.achacha.dada.engine.phonemix" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
-        </Logger>
+        <!--        <Logger name="io.github.achacha.dada.engine.phonemix" level="debug" additivity="false">-->
+        <!--            <AppenderRef ref="Console"/>-->
+        <!--        </Logger>-->
 
         Root debug level for base package
         <Logger name="io.github.achacha" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
