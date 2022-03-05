@@ -23,6 +23,11 @@ public class PhonemixEnhancedTransformerTest {
     public void testPreprocessor() {
         assertEquals("mośon", transformer.transform("motion"));
         assertEquals("konkokśon", transformer.transform("concoction"));
+        assertEquals("ßißors", transformer.transform("scissors"));
+        assertEquals("trembl", transformer.transform("tremble"));
+        assertEquals("mál", transformer.transform("male"));
+        assertEquals("récéív", transformer.transform("receive"));
+        assertEquals("śëv", transformer.transform("sieve"));
     }
 
     @Test
@@ -35,6 +40,7 @@ public class PhonemixEnhancedTransformerTest {
         assertEquals("lát", transformer.transform("late"));
         assertEquals("láter", transformer.transform("later"));
         assertEquals("rété", transformer.transform("rete"));
+        assertEquals("kàrv", transformer.transform("carve"));
     }
 
     @Test
@@ -87,5 +93,11 @@ public class PhonemixEnhancedTransformerTest {
         assertEquals("fûr", transformer.transform("fur"));
         assertEquals("pûr", transformer.transform("pour"));
         assertEquals("büty", transformer.transform("beauty"));
+    }
+
+    @Test
+    public void testPreprocessorY() {
+        // u related changes
+        assertEquals("yonder", transformer.transform("yonder"));
     }
 }

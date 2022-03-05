@@ -197,7 +197,7 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                 if (next == 'e' || next == 'i' || next == 'y') {
                     // c sounds like s
                     s[i] = 's';
-                    LOGGER.debug("[e] c->k, i={} s={}", i, s);
+                    LOGGER.debug("[e] c->s, i={} s={}", i, s);
                     return 0;
                 }
                 if (next == 'a' || next == 'o' || next == 'u' || isConsonantOrY(next)) {
@@ -284,6 +284,26 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     return 2;
                 }
 
+                if (next == 'e') {
+                    // ie i makes ë
+                    s[i] = 'ë';
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] ie->ë, i={} s={}", i, s);
+                    return 1;
+                }
+
+            }
+            break;
+
+            case 'l': {
+                char next = getNext(s, i);
+                char next2 = getNextNext(s, i);
+                if (next == 'e' && next2 == NONE) {
+                    // Silent e after l
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] le$->l$, i={} s={}", i, s);
+                    return 1;
+                }
             }
             break;
 
@@ -364,6 +384,14 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     LOGGER.debug("[e] ti->śi, i={} s={}", i, s);
                     return 0;
                 }
+                if (next == 'c') {
+                    // sc -> ß
+                    s[i] = 'ß';
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] sc->ß, i={} s={}", i, s);
+                    return 1;
+
+                }
             }
             break;
 
@@ -418,6 +446,19 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
             }
             break;
 
+            case 'v': {
+                char next = getNext(s, i);
+                char next2 = getNextNext(s, i);
+                char previous = getPrevious(s, i);
+                if (next == 'e' && next2 == NONE) {
+                    // {vowel}ve makes trailing e silent
+                    s[i + 1] = NONE;
+                    LOGGER.debug("[e] {vowel}ve$->{vowel}v$, i={} s={}", i, s);
+                    return 1;
+                }
+            }
+            break;
+
             case 'y': {
                 char next = getNext(s, i);
                 if (next == NONE && match('l', s, i, 'y')) {
@@ -426,13 +467,14 @@ public class PhonemixEnhancedTransformer extends PhonemixTransformerBase {
                     LOGGER.debug("[e] -ly->ë, i={} s={}", i, s);
                     return 0;
                 }
+                char previous = getPrevious(s, i);
                 if (isConsonantOrY(next)) {
                     // y followed by consonant becomes í
                     s[i] = 'í';
                     LOGGER.debug("[e] y{consonant}->í, i={} s={}", i, s);
                     return 0;
-                } else if (next != NONE) {
-                    // y followed by vowel becomes í and drops vowel
+                } else if (previous != NONE && next != NONE) {
+                    // y followed by vowel becomes í and drops vowel only when not starting word with y
                     s[i] = 'í';
                     s[i + 1] = NONE;
                     LOGGER.debug("[e] y{vowel}->í, i={} s={}", i, s);

@@ -124,7 +124,7 @@ public abstract class PhonemixTransformerBase implements PhoneticTransformer {
      * @return Resulting phonemix word
      */
     protected String transformWord(char[] word) {
-        LOGGER.debug("=|word={}", word);
+        LOGGER.debug("<--word={}", word);
         preprocess(word);
         int leftInWord = word.length;
         if (leftInWord > 2)
@@ -133,7 +133,9 @@ public abstract class PhonemixTransformerBase implements PhoneticTransformer {
             transformDigraph(word);
         if (leftInWord > 0)
             transformOne(word);
-        return postprocess(word);
+        String finalWord = postprocess(word);
+        LOGGER.debug("-->word={} -> {}", word, finalWord);
+        return finalWord;
     }
 
     /**
